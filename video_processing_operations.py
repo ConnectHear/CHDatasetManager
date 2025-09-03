@@ -22,7 +22,7 @@ class VideoProcessor:
 
     def _extract_frames_for_video(self, video_path):
         video_filename = os.path.basename(video_path)
-        logger.debug(f"Extracting frames from: {video_filename}")
+        # logger.debug(f"Extracting frames from: {video_filename}")
         keyframes_for_ssim = [None] * NUM_SSIM_KEYFRAMES
         preview_pil_images = []
         error_messages = []

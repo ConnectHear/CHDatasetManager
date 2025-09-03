@@ -57,7 +57,7 @@ jobs:
     - name: Build executable with PyInstaller
       # PyInstaller will run from the repository root
       run: |
-        pyinstaller --name VideoPlacer `
+        pyinstaller --name "CH Dataset Manager" `
                     --onefile `
                     --noconsole `
                     --hidden-import=tkinterdnd2 `
@@ -73,7 +73,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: VideoPlacer-Windows-exe
-        path: dist/VideoPlacer.exe # PyInstaller outputs the .exe to a 'dist' folder
+        path: dist/CHDatasetManager.exe # PyInstaller outputs the .exe to a 'dist' folder
 
     - name: Create GitHub Release and Upload Asset
       # This step runs for:
@@ -83,7 +83,7 @@ jobs:
       if: (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'release') || (github.ref == 'refs/heads/main' && github.event_name == 'push')
       uses: softprops/action-gh-release@v2
       with:
-        files: dist/VideoPlacer.exe # Path to the asset to upload
+        files: dist/CHDatasetManager.exe # Path to the asset to upload
         # For 'main' branch pushes, use 'dev-latest' tag. Otherwise, let the action infer from the Git tag or manual release event.
         tag_name: ${{ (github.ref == 'refs/heads/main' && github.event_name == 'push') && 'dev-latest' || '' }}
         # Customize release name based on the trigger
