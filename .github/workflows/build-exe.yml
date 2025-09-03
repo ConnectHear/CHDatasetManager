@@ -5,8 +5,8 @@ on:
     branches: [ main ] # Build on pushes to main (no release created here by default)
     tags:
       - 'v*'          # Build and create/update release on pushes to tags like v1.0, v0.1.0-alpha
-    paths:
-      - '**.py'       # Only run on changes to Python files
+  release:
+    types: [created]   # Build and attach to a release manually created in GitHub UI
 
 jobs:
   build-windows:
@@ -80,7 +80,7 @@ jobs:
       # 1. Pushes to tags starting with 'v' (e.g., v1.0.0)
       # 2. When a release is manually created in the GitHub UI
       # 3. Pushes to the 'main' branch (will create/update a 'dev-latest' pre-release)
-      if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main')
+      if: (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'release') || (github.ref == 'refs/heads/main' && github.event_name == 'push')
       uses: softprops/action-gh-release@v2
       with:
         files: dist/VideoPlacer.exe # Path to the asset to upload
@@ -92,7 +92,7 @@ jobs:
         body: |
           ${{ (github.ref == 'refs/heads/main' && github.event_name == 'push') && format('Latest development build from main branch. Commit: {0}', github.sha) || 'Official release. See CHANGELOG.md for details.' }}
         # Mark as pre-release for 'main' branch builds or if the version tag contains a hyphen (e.g., v1.0.0-beta)
-        prerelease: ${{ (github.ref == 'refs/heads/main') || (startsWith(github.ref, 'refs/tags/v') && contains(github.ref_name, '-')) }}
+        prerelease: ${{ (github.ref == 'refs/heads/main' && github.event_name == 'push') || (startsWith(github.ref, 'refs/tags/v') && contains(github.ref_name, '-')) || (github.event_name == 'release' && contains(github.ref_name, '-')) }}
         draft: false # Set to true if you want 'main' branch releases to be drafts initially
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by GitHub Actions

@@ -20,8 +20,8 @@ SSIM_RESIZE_HEIGHT = 90
 
 # Preview Frames
 NUM_PREVIEW_FRAMES = 5
-PREVIEW_START_PERC = 0.3  # Start preview sampling at 25%
-PREVIEW_END_PERC = 0.6   # End preview sampling at 75%
+PREVIEW_START_PERC = 0.25  # Start preview sampling at 25%
+PREVIEW_END_PERC = 0.75    # End preview sampling at 75%
 PREVIEW_FRAME_PERCENTAGES = np.linspace(PREVIEW_START_PERC, PREVIEW_END_PERC, NUM_PREVIEW_FRAMES)
 
 # --- Scoring and Marking Constants ---
@@ -30,5 +30,4 @@ PRE_MARKING_SCORE_THRESHOLD = 0.85
 
 # --- File System Constants ---
 VALID_VIDEO_EXTENSIONS = ('.mp4', '.avi', '.mov', '.wmv', '.mkv', '.flv')
-INTERPRETER_ID_RANGE = range(1, 21) 
-MAX_TAKES_PER_WORD_INTERPRETER = 4
+INTERPRETER_ID_RANGE = range(0, 10000) # Allow 4-digit numbers from 0000-9999
