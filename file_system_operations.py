@@ -38,7 +38,7 @@ def get_directory_structure(base_dir_path):
             category_path = os.path.join(base_dir_path, category_name)
             words = sorted([w for w in os.listdir(category_path) if os.path.isdir(os.path.join(category_path, w))])
             structure[category_name] = words
-        logger.debug(f"Directory structure scanned for {base_dir_path}: {len(structure)} categories.")
+        # logger.debug(f"Directory structure scanned for {base_dir_path}: {len(structure)} categories.")
     except Exception as e:
         logger.error(f"Error scanning directory structure {base_dir_path}: {e}", exc_info=True)
     return structure
@@ -57,7 +57,7 @@ def determine_next_take_number(target_dir_path, interpreter_id_str):
                         highest_take = max(highest_take, take_number)
                     except ValueError:
                         logger.warning(f"Non-integer take in {filename} for pattern {pattern.pattern}")
-            logger.debug(f"Highest take in {target_dir_path} for ID {interpreter_id_str} is {highest_take}.")
+            # logger.debug(f"Highest take in {target_dir_path} for ID {interpreter_id_str} is {highest_take}.")
             return highest_take + 1
         except Exception as e:
             logger.error(f"Error determining next take in {target_dir_path}: {e}", exc_info=True)

@@ -40,12 +40,12 @@ from CHDatasetManager.file_system_operations import (
 
 # --- Try importing required libraries and provide guidance if missing ---
 try:
-    logger.debug("Attempting to import dependencies: cv2, PIL, skimage, numpy")
+    # logger.debug("Attempting to import dependencies: cv2, PIL, skimage, numpy")
     import cv2
     from PIL import Image, ImageTk
     from skimage.metrics import structural_similarity as ssim
     import numpy as np
-    logger.debug("Core dependencies (cv2, PIL, skimage, numpy) imported successfully.")
+    # logger.debug("Core dependencies (cv2, PIL, skimage, numpy) imported successfully.")
 
 except ImportError as e:
     logger.critical(f"Missing required library: {e.name}. Please install dependencies.", exc_info=True)
@@ -91,12 +91,12 @@ class VideoPlacerApp:
         y = (screen_height // 2) - (height // 2)
         master.geometry(f'{width}x{height}+{x}+{y}')
         master.minsize(width, height) # Set minimum size
-        logger.debug(f"Window size set to {width}x{height}, centered at ({x},{y}) on screen {screen_width}x{screen_height}.")
+        # logger.debug(f"Window size set to {width}x{height}, centered at ({x},{y}) on screen {screen_width}x{screen_height}.")
 
 
         # --- State Variables ---
         self.initial_setup_done = False
-        logger.debug("State variable 'initial_setup_done' initialized to False.")
+        # logger.debug("State variable 'initial_setup_done' initialized to False.")
 
         # --- Tkinter Variables ---
         self.base_directory = tk.StringVar()
@@ -120,7 +120,7 @@ class VideoPlacerApp:
         self.preview_after_ids = [None] * MAX_VIDEOS
         self.analysis_queue = queue.Queue()
         self.is_analysis_running = False
-        logger.debug("Tkinter variables and state variables initialized.")
+        # logger.debug("Tkinter variables and state variables initialized.")
 
         # --- Initialize Helper Classes ---
         self.video_processor = VideoProcessor(self.analysis_queue.put)
@@ -136,18 +136,18 @@ class VideoPlacerApp:
         style.configure("TakeAssign.TLabel", font=('Helvetica', 10, 'bold'), foreground="blue")
         style.configure("Score.TLabel", font=('Helvetica', 9, 'bold'), foreground="green")
         style.configure("Confirm.TCheckbutton", font=('Helvetica', 9))
-        logger.debug("Configured ttk styles.")
+        # logger.debug("Configured ttk styles.")
 
 
         # --- GUI Layout ---
         main_frame = ttk.Frame(master, padding="15 15 15 15") # Increased padding
         main_frame.pack(expand=True, fill=tk.BOTH)
-        logger.debug("Main frame created and packed.")
+        # logger.debug("Main frame created and packed.")
 
         row_basedir = 0; row_id = 1; row_treeview = 2 # Category/Word Tree
         row_fileselect = 3; row_verification_area = 4; row_analysis_info = 5
         row_processbtn = 6; row_status = 7
-        logger.debug(f"Defined grid row assignments: basedir={row_basedir}, id={row_id}, treeview={row_treeview}, fileselect={row_fileselect}, verification={row_verification_area}, analysis_info={row_analysis_info}, process_btn={row_processbtn}, status={row_status}")
+        # logger.debug(f"Defined grid row assignments: basedir={row_basedir}, id={row_id}, treeview={row_treeview}, fileselect={row_fileselect}, verification={row_verification_area}, analysis_info={row_analysis_info}, process_btn={row_processbtn}, status={row_status}")
 
         # --- Widgets ---
         ttk.Label(main_frame, text="Base Directory:").grid(row=row_basedir, column=0, sticky=tk.W, padx=10, pady=(10, 5))
@@ -155,14 +155,14 @@ class VideoPlacerApp:
         self.base_dir_entry.grid(row=row_basedir, column=1, columnspan=2, padx=5, pady=(10, 5))
         self.base_dir_button = ttk.Button(main_frame, text="Browse...", command=self.select_base_dir)
         self.base_dir_button.grid(row=row_basedir, column=3, padx=10, pady=(10, 5))
-        logger.debug("Base directory widgets placed.")
+        # logger.debug("Base directory widgets placed.")
 
         ttk.Label(main_frame, text="Interpreter ID:").grid(row=row_id, column=0, sticky=tk.W, padx=10, pady=5)
         self.interpreter_id_entry = ttk.Entry(main_frame, textvariable=self.selected_interpreter_id, width=40, state='disabled') # Adjusted width
         self.interpreter_id_entry.grid(row=row_id, column=1, sticky=tk.EW, padx=5, pady=5)
         self.interpreter_id_entry.bind("<FocusOut>", self.on_id_select) # Trigger validation when focus leaves
         self.interpreter_id_entry.bind("<Return>", self.on_id_select) # Trigger validation when Enter is pressed
-        logger.debug("Interpreter ID widgets placed.")
+        # logger.debug("Interpreter ID widgets placed.")
 
         # --- Category/Word TreeView ---
         ttk.Label(main_frame, text="Category / Word:").grid(row=row_treeview, column=0, sticky=tk.NW, padx=10, pady=(10,5))
@@ -174,21 +174,21 @@ class VideoPlacerApp:
         self.category_word_tree.grid(row=row_treeview, column=1, sticky="nsew", padx=(5,0), pady=5)
         self.tree_scroll.grid(row=row_treeview, column=2, sticky="nsw", padx=(0,10), pady=5) # Adjusted padx
         self.category_word_tree.bind("<<TreeviewSelect>>", self.on_tree_item_select)
-        logger.debug("Category/Word TreeView placed.")
+        # logger.debug("Category/Word TreeView placed.")
 
         ttk.Label(main_frame, text="Selected Files:").grid(row=row_fileselect, column=0, sticky=tk.W, padx=10, pady=5)
         self.files_info_entry = ttk.Entry(main_frame, textvariable=self.selected_files_info, width=40, state='readonly') # Adjusted width
         self.files_info_entry.grid(row=row_fileselect, column=1, sticky=tk.EW, padx=5, pady=5)
         self.select_files_button = ttk.Button(main_frame, text="Select Files...", command=self.select_video_files, state='disabled')
         self.select_files_button.grid(row=row_fileselect, column=3, padx=10, pady=5)
-        logger.debug("File selection widgets placed.")
+        # logger.debug("File selection widgets placed.")
 
 
         # --- Verification Area (Animated Preview, Scores, Checkboxes) ---
         ttk.Label(main_frame, text="Review & Approve Takes:").grid(row=row_verification_area, column=0, sticky="nw", padx=10, pady=(15, 0))
         self.verification_frame = ttk.Frame(main_frame, borderwidth=1, relief="sunken")
         self.verification_frame.grid(row=row_verification_area, column=1, columnspan=3, sticky="nsew", padx=5, pady=(10,5)) # Adjusted padx
-        logger.debug("Verification area frame placed.")
+        # logger.debug("Verification area frame placed.")
 
         # Use single label per slot for animation
         self.preview_labels = []
@@ -214,33 +214,33 @@ class VideoPlacerApp:
             confirm_cb = ttk.Checkbutton(item_frame, text="Approve", variable=self.per_video_confirmed_vars[i], onvalue=True, offvalue=False, command=self.check_button_state, style="Confirm.TCheckbutton", state='disabled')
             confirm_cb.pack(pady=(0,5))
             self.confirm_checkboxes.append(confirm_cb)
-        logger.debug(f"Created {MAX_VIDEOS} slots in verification frame (preview labels, score labels, checkboxes).")
+        # logger.debug(f"Created {MAX_VIDEOS} slots in verification frame (preview labels, score labels, checkboxes).")
 
         # Take Assignment Display
         ttk.Label(main_frame, textvariable=self.take_assignment_display, style="TakeAssign.TLabel").grid(row=row_analysis_info, column=1, columnspan=2, sticky="w", padx=5, pady=(5, 0)) # Adjusted columnspan and padx
-        logger.debug("Take assignment display label placed.")
+        # logger.debug("Take assignment display label placed.")
 
         # Process Button
         self.process_button = ttk.Button(main_frame, text="Place Approved Files", command=self.process_selected_videos, state='disabled')
         self.process_button.grid(row=row_processbtn, column=1, sticky=tk.EW, pady=20, padx=5)
-        logger.debug("Process button placed.")
+        # logger.debug("Process button placed.")
 
         # Status Label
         ttk.Label(main_frame, textvariable=self.status_message, style="Status.TLabel").grid(row=row_status, column=0, columnspan=4, sticky="ew", padx=5, pady=(10, 15)) # Adjusted padx
-        logger.debug("Status label placed.")
+        # logger.debug("Status label placed.")
 
         # --- Configure Grid (within main_frame) ---
         main_frame.columnconfigure(1, weight=1)
         main_frame.columnconfigure(2, weight=0) # Column for scrollbar / some buttons
         main_frame.columnconfigure(3, weight=0) # Column for some buttons
         main_frame.rowconfigure(row_verification_area, weight=1)
-        logger.debug("Main frame grid configured for expansion.")
+        # logger.debug("Main frame grid configured for expansion.")
 
         # --- Start Queue Checker & Bind Closing ---
         self.master.after(100, self.check_analysis_queue) # Start queue checker
-        logger.debug("Started check_analysis_queue loop via master.after.")
+        # logger.debug("Started check_analysis_queue loop via master.after.")
         # Bind closing event
-        logger.debug("Bound on_closing method to window close event.")
+        # logger.debug("Bound on_closing method to window close event.")
 
 
 
@@ -253,46 +253,46 @@ class VideoPlacerApp:
             if self.preview_after_ids[i] is not None:
                 try:
                     self.master.after_cancel(self.preview_after_ids[i])
-                    logger.debug(f"Cancelled animation 'after' job for slot {i}.")
+                    # logger.debug(f"Cancelled animation 'after' job for slot {i}.")
                 except tk.TclError:
-                    logger.debug(f"Could not cancel animation 'after' job for slot {i} (job may have already run/cancelled).")
+                    # logger.debug(f"Could not cancel animation 'after' job for slot {i} (job may have already run/cancelled).")
                     pass # Job might have already run or been cancelled
                 self.preview_after_ids[i] = None
 
         self.per_video_similarity_scores = [None] * MAX_VIDEOS
-        logger.debug("Similarity scores reset.")
+        # logger.debug("Similarity scores reset.")
         for var in self.score_display_vars:
             var.set("Score: -")
-        logger.debug("Score display labels reset.")
+        # logger.debug("Score display labels reset.")
         self.take_assignment_display.set("Takes: -")
-        logger.debug("Take assignment display reset.")
+        # logger.debug("Take assignment display reset.")
         self.initial_confirmation_state = [False] * MAX_VIDEOS # Reset initial state tracking
-        logger.debug("Initial confirmation state tracking reset.")
+        # logger.debug("Initial confirmation state tracking reset.")
         for i in range(MAX_VIDEOS):
             self.per_video_confirmed_vars[i].set(False)
             if i < len(self.confirm_checkboxes):
                  # Keep checkboxes disabled until analysis results are ready
                  self.confirm_checkboxes[i].config(state='disabled')
-        logger.debug("Approval checkboxes reset and disabled.")
+        # logger.debug("Approval checkboxes reset and disabled.")
 
         # Clear preview images and labels
         self.preview_photo_images = [[] for _ in range(MAX_VIDEOS)] # Reset list of lists
-        logger.debug("Preview photo image list reset.")
+        # logger.debug("Preview photo image list reset.")
         for i, label in enumerate(self.preview_labels): # Use the single preview labels now
              try:
                 label.config(image='') # Clear the displayed image
-                logger.debug(f"Cleared preview image for slot {i}.")
+                # logger.debug(f"Cleared preview image for slot {i}.")
              except Exception as e:
                  logger.warning(f"Failed to clear image for preview label {i}: {e}") # Should not happen
         self.preview_animation_index = [0] * MAX_VIDEOS # Reset animation index
-        logger.debug("Preview animation indices reset.")
+        # logger.debug("Preview animation indices reset.")
 
-        logger.debug("Finished clearing analysis results.")
+        # logger.debug("Finished clearing analysis results.")
 
     def select_base_dir(self):
-        logger.debug("select_base_dir called.")
+        # logger.debug("select_base_dir called.")
         if self.initial_setup_done:
-            logger.debug("select_base_dir: Initial setup already done, returning.")
+            # logger.debug("select_base_dir: Initial setup already done, returning.")
             return
 
         directory = filedialog.askdirectory(title="Select Base Directory (Set Once)")
@@ -305,18 +305,18 @@ class VideoPlacerApp:
             self.interpreter_id_entry.focus()
             self.base_dir_button.config(state='disabled')
             self.category_word_tree.unbind("<<TreeviewSelect>>")
-            logger.debug("Treeview unbind <<TreeviewSelect>> in select_base_dir")
+            # logger.debug("Treeview unbind <<TreeviewSelect>> in select_base_dir")
             self.select_files_button.config(state='disabled')
             self.process_button.config(state='disabled') # Process button should also be disabled
-            logger.debug("Enabled Interpreter ID combobox, disabled Base Dir button.")
+            # logger.debug("Enabled Interpreter ID combobox, disabled Base Dir button.")
         else:
             logger.info("Base directory selection cancelled.")
             self.status_message.set("Base directory selection cancelled. Please select Base Directory.")
-            logger.debug("Base directory selection cancelled, status message updated.")
+            # logger.debug("Base directory selection cancelled, status message updated.")
 
     def _validate_interpreter_id(self, interpreter_id_str):
         """Validates the interpreter ID input."""
-        logger.debug(f"Validating interpreter ID: '{interpreter_id_str}'")
+        # logger.debug(f"Validating interpreter ID: '{interpreter_id_str}'")
         if not interpreter_id_str:
             messagebox.showerror("Validation Error", "Interpreter ID cannot be empty.")
             logger.warning("Interpreter ID validation failed: empty.")
@@ -332,28 +332,28 @@ class VideoPlacerApp:
             logger.warning(f"Interpreter ID validation failed: {interpreter_id_int} is out of range.")
             return False
         
-        logger.debug(f"Interpreter ID '{interpreter_id_str}' validated successfully.")
+        # logger.debug(f"Interpreter ID '{interpreter_id_str}' validated successfully.")
         return True
 
     def on_id_select(self, event=None):
-        logger.debug(f"on_id_select called. Event: {event}")
+        # logger.debug(f"on_id_select called. Event: {event}")
         selected_id = self.selected_interpreter_id.get()
 
         if self.initial_setup_done:
-            logger.debug("on_id_select: Initial setup already done. Returning.")
+            # logger.debug("on_id_select: Initial setup already done. Returning.")
             return
 
         if not self._validate_interpreter_id(selected_id):
             self.interpreter_id_entry.focus_set() # Keep focus on the entry for correction
             self.status_message.set("Please enter a valid 4-digit Interpreter ID.")
-            logger.debug("Interpreter ID validation failed in on_id_select. Not proceeding with setup.")
+            # logger.debug("Interpreter ID validation failed in on_id_select. Not proceeding with setup.")
             return
 
         logger.info(f"Interpreter ID selected: {selected_id}. Initial setup now complete.")
         self.initial_setup_done = True
         # self.interpreter_id_entry.config(state='disabled') # Keep editable as per user feedback
         self.status_message.set("Step 3: Select a Word from the tree below.")
-        logger.debug("Calling populate_category_word_tree.")
+        # logger.debug("Calling populate_category_word_tree.")
         self.populate_category_word_tree()
         # populate_category_word_tree itself will set state to 'normal' if successful
         # or 'disabled' if not.
@@ -363,38 +363,38 @@ class VideoPlacerApp:
         self.selected_category.set("")
         self.selected_word.set("")
         self.category_word_tree.selection_set(()) # Clear tree selection
-        logger.debug("Category and Word selections (StringVar) cleared. Tree selection cleared.")
+        # logger.debug("Category and Word selections (StringVar) cleared. Tree selection cleared.")
 
         self.selected_file_paths_tuple = ()
         self.selected_files_info.set("No files selected")
-        logger.debug("Word selection and file selection cleared.")
+        # logger.debug("Word selection and file selection cleared.")
 
         self.clear_analysis_results()
-        logger.debug("Analysis results cleared.")
+        # logger.debug("Analysis results cleared.")
 
         # Status message is handled by populate_category_word_tree or on_tree_item_select
 
         # Select Files button should be disabled until Word is selected
         self.select_files_button.config(state='disabled')
-        logger.debug("File select button disabled.")
+        # logger.debug("File select button disabled.")
 
         self.check_button_state() # Re-evaluate process button state
-        logger.debug("check_button_state called after Category selection.")
-        logger.debug("on_id_select finished processing.")
+        # logger.debug("check_button_state called after Category selection.")
+        # logger.debug("on_id_select finished processing.")
 
     def populate_category_word_tree(self):
         """Populates the TreeView with categories and words from the base directory."""
-        logger.debug("populate_category_word_tree called.")
+        # logger.debug("populate_category_word_tree called.")
         for i in self.category_word_tree.get_children():
             self.category_word_tree.delete(i)
-        logger.debug("Cleared existing items from category_word_tree.")
+        # logger.debug("Cleared existing items from category_word_tree.")
 
         base_dir = self.base_directory.get()
         if not base_dir or not os.path.isdir(base_dir):
             logger.warning(f"Base directory '{base_dir}' not set or not a directory. Tree not populated.")
             self.category_word_tree.insert("", "end", text="Base directory not set or invalid.", open=False)
             self.category_word_tree.unbind("<<TreeviewSelect>>")
-            logger.debug("Treeview unbind <<TreeviewSelect>> in populate_category_word_tree (base_dir invalid)")
+            # logger.debug("Treeview unbind <<TreeviewSelect>> in populate_category_word_tree (base_dir invalid)")
             self.status_message.set("Error: Base directory invalid. Cannot load categories.")
             return
 
@@ -416,7 +416,7 @@ class VideoPlacerApp:
                     self.category_word_tree.insert(category_id, "end", text=" (No words)", tags=('empty_category_info',))
             
         self.category_word_tree.bind("<<TreeviewSelect>>", self.on_tree_item_select)
-        logger.debug("Treeview bind <<TreeviewSelect>> in populate_category_word_tree (success)")
+        # logger.debug("Treeview bind <<TreeviewSelect>> in populate_category_word_tree (success)")
         self.status_message.set("Select a Category, then a Word from the tree.")
         # logger.info(f"Populated category/word tree with {len(categories)} categories from {base_dir}.") # categories not defined here
         logger.info(f"Populated category/word tree with {len(dir_structure)} categories from {base_dir}.")
@@ -424,13 +424,13 @@ class VideoPlacerApp:
 
     def on_tree_item_select(self, event=None):
         """Handles selection changes in the category/word TreeView."""
-        logger.debug("on_tree_item_select called.")
+        # logger.debug("on_tree_item_select called.")
         selected_item_id = self.category_word_tree.focus() # Get the ID of the focused/selected item
 
         if not selected_item_id: # No item selected (e.g., selection cleared)
             self.selected_category.set("")
             self.selected_word.set("")
-            logger.debug("Tree selection cleared. Category and Word reset.")
+            # logger.debug("Tree selection cleared. Category and Word reset.")
         else:
             item = self.category_word_tree.item(selected_item_id)
             item_text = item['text']
@@ -466,13 +466,13 @@ class VideoPlacerApp:
             self.take_assignment_display.set("Takes: -")
 
         self.check_button_state()
-        logger.debug("on_tree_item_select finished processing.")
+        # logger.debug("on_tree_item_select finished processing.")
 
     # --- Centralized File Processing Logic ---
     def _process_filepaths_for_analysis(self, filepaths):
         """Common logic to handle a list of filepaths for analysis."""
         if not filepaths:
-            logger.debug("_process_filepaths_for_analysis called with no filepaths.")
+            # logger.debug("_process_filepaths_for_analysis called with no filepaths.")
             return
 
         num_selected = len(filepaths)
@@ -506,7 +506,7 @@ class VideoPlacerApp:
         num_to_process = len(filepaths_to_process)
 
         self.clear_analysis_results() # Clears previous results and animations
-        logger.debug("Cleared previous analysis results and animations before new analysis.")
+        # logger.debug("Cleared previous analysis results and animations before new analysis.")
 
         self.selected_file_paths_tuple = filepaths_to_process
         self.selected_files_info.set(f"{num_to_process} file(s) selected")
@@ -523,12 +523,12 @@ class VideoPlacerApp:
             args=(filepaths_to_process,),
             daemon=True)
         analysis_thread.start()
-        logger.debug(f"Analysis thread started: {analysis_thread.name}")
+        # logger.debug(f"Analysis thread started: {analysis_thread.name}")
 
     # --- Video File Selection and Analysis Trigger ---
     def select_video_files(self):
         """Opens dialog to select multiple video files and starts analysis thread."""
-        logger.debug("select_video_files called.")
+        # logger.debug("select_video_files called.")
         if not self.selected_word.get(): # Corrected from selected_col_b
             messagebox.showwarning("Selection Missing", "Please select Word first.")
             logger.warning("Attempted to select files before selecting Word.")
@@ -539,7 +539,7 @@ class VideoPlacerApp:
             logger.warning("Attempted to select files while analysis is already running.")
             return
 
-        logger.debug(f"Opening file dialog to select up to {MAX_VIDEOS} video files.")
+        # logger.debug(f"Opening file dialog to select up to {MAX_VIDEOS} video files.")
         filepaths_from_dialog = filedialog.askopenfilenames(title=f"Select up to {MAX_VIDEOS} Video Files", filetypes=VIDEO_TYPES_FILTER)
 
         if filepaths_from_dialog:
@@ -565,7 +565,7 @@ class VideoPlacerApp:
             if result.get('type') == 'analysis_complete':
                 logger.info("Processing 'analysis_complete' message.")
                 self.is_analysis_running = False
-                logger.debug("is_analysis_running set to False.")
+                # logger.debug("is_analysis_running set to False.")
 
                 # Retrieve results using the new keys
                 list_of_preview_pil_list = result.get("previews", [])
@@ -574,17 +574,17 @@ class VideoPlacerApp:
                 filepaths = result.get("filepaths", []) # Get filepaths for context
                 num_selected = len(filepaths) # Use the actual number of files selected
 
-                logger.debug(f"Received scores: {self.per_video_similarity_scores}")
-                logger.debug(f"Received errors: {errors}")
-                logger.debug(f"Received previews list structure: {len(list_of_preview_pil_list)} lists of previews.")
+                # logger.debug(f"Received scores: {self.per_video_similarity_scores}")
+                # logger.debug(f"Received errors: {errors}")
+                # logger.debug(f"Received previews list structure: {len(list_of_preview_pil_list)} lists of previews.")
 
 
                 # --- Update Score Display ---
-                logger.debug("Updating score display labels.")
+                # logger.debug("Updating score display labels.")
                 valid_scores = [s for s in self.per_video_similarity_scores[:num_selected] if s is not None]
                 max_score = 0.0
                 if valid_scores: max_score = max(valid_scores)
-                logger.debug(f"Valid scores for pre-marking: {valid_scores}, Max Score: {max_score:.3f}")
+                # logger.debug(f"Valid scores for pre-marking: {valid_scores}, Max Score: {max_score:.3f}")
 
 
                 for i in range(MAX_VIDEOS):
@@ -592,17 +592,17 @@ class VideoPlacerApp:
                          current_score = self.per_video_similarity_scores[i]
                          if current_score is not None:
                              self.score_display_vars[i].set(f"Score: {current_score:.3f}")
-                             logger.debug(f"Set score for slot {i}: {current_score:.3f}")
+                             # logger.debug(f"Set score for slot {i}: {current_score:.3f}")
                          else:
                              self.score_display_vars[i].set("Score: N/A")
-                             logger.debug(f"Set score for slot {i}: N/A (score was None)")
+                             # logger.debug(f"Set score for slot {i}: N/A (score was None)")
                     else:
                         self.score_display_vars[i].set("Score: -")
-                        logger.debug(f"Set score for slot {i}: - (index out of bounds for selected files)")
+                        # logger.debug(f"Set score for slot {i}: - (index out of bounds for selected files)")
 
 
                 # --- Create PhotoImage objects for previews and enable/disable checkboxes ---
-                logger.debug("Creating PhotoImage objects and configuring checkboxes.")
+                # logger.debug("Creating PhotoImage objects and configuring checkboxes.")
                 self.preview_photo_images = [[] for _ in range(MAX_VIDEOS)] # Reset list of lists
                 checkbox_states_after_load = {} # Map index to state ('normal', 'disabled')
                 num_videos_with_valid_previews = 0 # Count videos that successfully loaded at least one preview
@@ -613,7 +613,7 @@ class VideoPlacerApp:
 
                     if video_idx < num_selected and video_idx < len(list_of_preview_pil_list):
                         pil_images_for_video = list_of_preview_pil_list[video_idx]
-                        logger.debug(f"Processing preview images for slot {video_idx}. Found {len(pil_images_for_video)} potential PIL images (orig+flow).")
+                        # logger.debug(f"Processing preview images for slot {video_idx}. Found {len(pil_images_for_video)} potential PIL images (orig+flow).")
 
                         # Iterate through all images provided for this video (original and flow frames)
                         for img_list_idx, pil_image in enumerate(pil_images_for_video):
@@ -623,7 +623,7 @@ class VideoPlacerApp:
                                     photo_images_for_video.append(photo_img)
                                     preview_success = True
                                     # Determine if it's an original or flow frame for logging
-                                    logger.debug(f"Successfully created PhotoImage for original frame {img_list_idx +1} (list index {img_list_idx}) in slot {video_idx}.")
+                                    # logger.debug(f"Successfully created PhotoImage for original frame {img_list_idx +1} (list index {img_list_idx}) in slot {video_idx}.")
                                 except Exception as e:
                                     logger.error(f"Error creating PhotoImage for image at list index {img_list_idx} in slot {video_idx}: {e}", exc_info=True)
                                     photo_images_for_video.append(None) # Add placeholder on error
@@ -639,29 +639,29 @@ class VideoPlacerApp:
 
                     if video_idx < len(self.confirm_checkboxes):
                         self.confirm_checkboxes[video_idx].config(state=checkbox_state)
-                        logger.debug(f"Checkbox for slot {video_idx} set to state '{checkbox_state}'.")
+                        # logger.debug(f"Checkbox for slot {video_idx} set to state '{checkbox_state}'.")
                         if checkbox_state == 'disabled':
                             # If disabled, ensure the checkbox is unchecked
                             if self.per_video_confirmed_vars[video_idx].get():
                                 self.per_video_confirmed_vars[video_idx].set(False)
-                                logger.debug(f"Checkbox for slot {video_idx} was disabled and unchecked.")
+                                # logger.debug(f"Checkbox for slot {video_idx} was disabled and unchecked.")
                             else:
-                                logger.debug(f"Checkbox for slot {video_idx} was disabled.")
+                                # logger.debug(f"Checkbox for slot {video_idx} was disabled.")
 
                     if preview_success:
                         num_videos_with_valid_previews += 1
                         # --- Start Animation for this slot ---
-                        logger.debug(f"Starting preview animation for slot {video_idx}.")
+                        # logger.debug(f"Starting preview animation for slot {video_idx}.")
                         self.start_preview_animation(video_idx)
                     else:
-                         logger.debug(f"No valid previews loaded for slot {video_idx}. Animation not started.")
+                         # logger.debug(f"No valid previews loaded for slot {video_idx}. Animation not started.")
                          # Ensure label is empty if no previews loaded
                          if video_idx < len(self.preview_labels):
                             self.preview_labels[video_idx].config(image='')
 
 
                 # --- Pre-mark Checkbox(es) based on Standard Deviation ---
-                logger.debug("Starting pre-marking process.")
+                # logger.debug("Starting pre-marking process.")
                 # Reset all checkboxes first (already done in clear_analysis_results, but good to re-iterate intention)
                 # for i in range(MAX_VIDEOS): self.per_video_confirmed_vars[i].set(False) # Already reset
 
@@ -682,15 +682,15 @@ class VideoPlacerApp:
                             logger.info(f"Pre-marking video index {i} ('{os.path.basename(filepaths[i])}') - Score {current_score:.3f} >= Threshold {score_threshold:.3f} or {PRE_MARKING_SCORE_THRESHOLD}. Checkbox state was '{checkbox_states_after_load.get(i)}'.")
                             self.per_video_confirmed_vars[i].set(True)
                         elif is_enabled:
-                             logger.debug(f"Video index {i} ('{os.path.basename(filepaths[i])}') not pre-marked. Score {current_score} (is None={current_score is None}). Threshold check: {current_score >= score_threshold if current_score is not None else 'N/A'} | {current_score >= PRE_MARKING_SCORE_THRESHOLD if current_score is not None else 'N/A'}. Checkbox state was '{checkbox_states_after_load.get(i)}'.")
+                             # logger.debug(f"Video index {i} ('{os.path.basename(filepaths[i])}') not pre-marked. Score {current_score} (is None={current_score is None}). Threshold check: {current_score >= score_threshold if current_score is not None else 'N/A'} | {current_score >= PRE_MARKING_SCORE_THRESHOLD if current_score is not None else 'N/A'}. Checkbox state was '{checkbox_states_after_load.get(i)}'.")
                         else:
-                            logger.debug(f"Video index {i} ('{os.path.basename(filepaths[i])}') not pre-marked because checkbox was disabled (state: '{checkbox_states_after_load.get(i)}'). Score: {current_score}.")
+                            # logger.debug(f"Video index {i} ('{os.path.basename(filepaths[i])}') not pre-marked because checkbox was disabled (state: '{checkbox_states_after_load.get(i)}'). Score: {current_score}.")
 
 
                 # --- Store Initial Confirmation State for Logging ---
                 # This state reflects the checkboxes AFTER analysis and pre-marking
                 self.initial_confirmation_state = [self.per_video_confirmed_vars[i].get() if i < MAX_VIDEOS else False for i in range(num_selected)]
-                logger.debug(f"Stored initial confirmation state after pre-marking: {self.initial_confirmation_state[:num_selected]}")
+                # logger.debug(f"Stored initial confirmation state after pre-marking: {self.initial_confirmation_state[:num_selected]}")
 
 
                 # Report errors from thread
@@ -700,7 +700,7 @@ class VideoPlacerApp:
 
                 # Calculate take assignment ONLY if analysis produced results (at least one valid preview)
                 if num_videos_with_valid_previews > 0:
-                    logger.debug("Valid previews found. Calculating take assignment.")
+                    # logger.debug("Valid previews found. Calculating take assignment.")
                     self.calculate_and_display_take_assignment()
                     # Status message updated in calculate_and_display_take_assignment if successful
                 else:
@@ -710,7 +710,7 @@ class VideoPlacerApp:
 
 
                 self.check_button_state() # Update process button state based on confirmation checkboxes
-                logger.debug("check_button_state called after analysis results processed.")
+                # logger.debug("check_button_state called after analysis results processed.")
             # else: Handle other message types if needed in the future
 
         except queue.Empty:
@@ -728,32 +728,32 @@ class VideoPlacerApp:
     # --- Animation Functions ---
     def start_preview_animation(self, video_idx):
         """Starts or restarts the animation loop for a specific video slot."""
-        logger.debug(f"Attempting to start/restart animation for slot {video_idx}.")
+        # logger.debug(f"Attempting to start/restart animation for slot {video_idx}.")
         # Cancel any previous loop for this slot
         if self.preview_after_ids[video_idx] is not None:
             try:
                 self.master.after_cancel(self.preview_after_ids[video_idx])
-                logger.debug(f"Cancelled existing animation 'after' job {self.preview_after_ids[video_idx]} for slot {video_idx}.")
+                # logger.debug(f"Cancelled existing animation 'after' job {self.preview_after_ids[video_idx]} for slot {video_idx}.")
             except tk.TclError:
-                 logger.debug(f"Existing animation 'after' job for slot {video_idx} was already cancelled or finished.")
+                 # logger.debug(f"Existing animation 'after' job for slot {video_idx} was already cancelled or finished.")
                  pass # Ignore if job doesn't exist
             self.preview_after_ids[video_idx] = None
-            logger.debug(f"Cleared preview_after_ids[{video_idx}].")
+            # logger.debug(f"Cleared preview_after_ids[{video_idx}].")
 
 
         # Reset index and start the update cycle
         self.preview_animation_index[video_idx] = 0
-        logger.debug(f"Reset animation index for slot {video_idx} to 0.")
+        # logger.debug(f"Reset animation index for slot {video_idx} to 0.")
 
         # Check if the preview label exists before trying to configure it
         if video_idx < len(self.preview_labels):
             # Check if there are any valid PhotoImages for this slot before starting
             valid_photo_list = [img for img in self.preview_photo_images[video_idx] if img is not None]
             if valid_photo_list:
-                 logger.debug(f"Starting animation update cycle for slot {video_idx} with {len(valid_photo_list)} valid frames.")
+                 # logger.debug(f"Starting animation update cycle for slot {video_idx} with {len(valid_photo_list)} valid frames.")
                  self.update_preview_animation(video_idx)
             else:
-                 logger.debug(f"No valid PhotoImages found for slot {video_idx}. Not starting animation.")
+                 # logger.debug(f"No valid PhotoImages found for slot {video_idx}. Not starting animation.")
                  # Ensure label is clear if no animation starts
                  self.preview_labels[video_idx].config(image='')
 
@@ -783,7 +783,7 @@ class VideoPlacerApp:
         valid_photo_list = [img for img in photo_list if img is not None]
 
         if not valid_photo_list: # No valid images loaded for this slot
-            logger.debug(f"No valid photo list for slot {video_idx} during update. Stopping animation.")
+            # logger.debug(f"No valid photo list for slot {video_idx} during update. Stopping animation.")
             self.preview_labels[video_idx].config(image='') # Ensure label is clear
             self.preview_after_ids[video_idx] = None # Stop loop
             return
@@ -816,7 +816,7 @@ class VideoPlacerApp:
     # --- Take Calculation ---
     def calculate_and_display_take_assignment(self):
         """Calculates the available take range based on existing files and number selected."""
-        logger.debug("calculate_and_display_take_assignment called.")
+        # logger.debug("calculate_and_display_take_assignment called.")
         base_dir = self.base_directory.get() # Correct
         category = self.selected_category.get() # Updated
         word = self.selected_word.get()         # Updated
@@ -825,7 +825,7 @@ class VideoPlacerApp:
 
         if num_selected == 0:
             self.take_assignment_display.set("Takes: -")
-            logger.debug("No files selected, take assignment set to '-'.")
+            # logger.debug("No files selected, take assignment set to '-'.")
             return
 
         if not all([base_dir, category, word, interpreter_id]): # Updated
@@ -835,7 +835,7 @@ class VideoPlacerApp:
             return
 
         target_folder_path = os.path.join(base_dir, category, word, interpreter_id) # Updated
-        logger.debug(f"Checking existing takes in target folder: {target_folder_path}")
+        # logger.debug(f"Checking existing takes in target folder: {target_folder_path}")
 
         start_take = determine_next_take_number(target_folder_path, interpreter_id)
         if start_take == -1: # Error occurred
@@ -843,7 +843,7 @@ class VideoPlacerApp:
             self.status_message.set(f"Error checking existing takes in target folder.")
             return
 
-        logger.debug(f"Calculated starting take: {start_take}.")
+        # logger.debug(f"Calculated starting take: {start_take}.")
 
 
         if start_take > 4:
@@ -870,19 +870,19 @@ class VideoPlacerApp:
                 current_status = self.status_message.get()
                 if "Analyzing" not in current_status and "Error" not in current_status:
                     self.status_message.set(f"Ready for approval. Review videos and approve below.")
-                    logger.debug("Status message updated to 'Ready for approval'.")
+                    # logger.debug("Status message updated to 'Ready for approval'.")
 
-        logger.debug("Finished take assignment calculation.")
+        # logger.debug("Finished take assignment calculation.")
 
 
     # --- Button State Check ---
     def check_button_state(self):
         """Enables or disables widgets based on the application state (Set-Once Workflow)."""
-        logger.debug("check_button_state called.")
+        # logger.debug("check_button_state called.")
 
         # Initial Setup Phase
         if not self.initial_setup_done:
-            logger.debug("Initial setup phase.")
+            # logger.debug("Initial setup phase.")
             # Base directory button enabled only if no base dir is set yet
             self.base_dir_button.config(state='normal' if not self.base_directory.get() else 'disabled')
             # Interpreter ID enabled only after base dir is set
@@ -891,15 +891,15 @@ class VideoPlacerApp:
             self.process_button.config(state='disabled')
             # Checkboxes disabled in clear_analysis_results, which is called during initial setup
             # for cb in self.confirm_checkboxes: cb.config(state='disabled') # Redundant if clear_analysis_results is called appropriately
-            logger.debug("Widget states updated for initial setup phase.")
+            # logger.debug("Widget states updated for initial setup phase.")
             return
 
         # Post-Initial Setup Phase
-        logger.debug("Post-initial setup phase.")
+        # logger.debug("Post-initial setup phase.")
         # Base dir and ID are disabled after initial setup
         self.base_dir_button.config(state='disabled')
         # self.interpreter_id_entry.config(state='disabled') # Keep editable as per user feedback
-        logger.debug("Base dir and ID widgets disabled.")
+        # logger.debug("Base dir and ID widgets disabled.")
 
         # Category/Word TreeView enabled if initial setup is done and base_directory is set
         # (its population logic handles if base_dir is invalid)
@@ -908,18 +908,18 @@ class VideoPlacerApp:
             # However, ttk.Treeview doesn't have a simple way to check existing bindings for a specific event sequence directly.
             # For simplicity, we'll re-bind; Tkinter usually handles duplicate binds by replacing.
             self.category_word_tree.bind("<<TreeviewSelect>>", self.on_tree_item_select)
-            logger.debug("Treeview bind <<TreeviewSelect>> in check_button_state (enabled)")
+            # logger.debug("Treeview bind <<TreeviewSelect>> in check_button_state (enabled)")
             tree_state_log = "bound"
         else:
             self.category_word_tree.unbind("<<TreeviewSelect>>")
-            logger.debug("Treeview unbind <<TreeviewSelect>> in check_button_state (disabled)")
+            # logger.debug("Treeview unbind <<TreeviewSelect>> in check_button_state (disabled)")
             tree_state_log = "unbound"
-        logger.debug(f"Category/Word TreeView event <<TreeviewSelect>> is {tree_state_log}")
+        # logger.debug(f"Category/Word TreeView event <<TreeviewSelect>> is {tree_state_log}")
 
         # File Select enabled if Word is selected
         word_selected = bool(self.selected_word.get())
         self.select_files_button.config(state='normal' if word_selected else 'disabled')
-        logger.debug(f"File select button state set to {'normal' if word_selected else 'disabled'}.")
+        # logger.debug(f"File select button state set to {'normal' if word_selected else 'disabled'}.")
 
         # Process button requires specific conditions:
         # 1. Files must be selected.
@@ -937,12 +937,12 @@ class VideoPlacerApp:
         # Enable process button if all conditions met
         enable_process = (files_selected and valid_take_assignment and at_least_one_confirmed and can_process)
         self.process_button.config(state='normal' if enable_process else 'disabled')
-        logger.debug(f"Process button state set to {'normal' if enable_process else 'disabled'}. Conditions: FilesSelected={files_selected}, ValidTakes={valid_take_assignment}, Approved={at_least_one_confirmed}, AnalysisRunning={self.is_analysis_running}.")
+        # logger.debug(f"Process button state set to {'normal' if enable_process else 'disabled'}. Conditions: FilesSelected={files_selected}, ValidTakes={valid_take_assignment}, Approved={at_least_one_confirmed}, AnalysisRunning={self.is_analysis_running}.")
 
         # Checkboxes states are handled during analysis completion in check_analysis_queue
         # or cleared in clear_analysis_results. No need to manage their state here based on workflow steps.
 
-        logger.debug("Finished check_button_state.")
+        # logger.debug("Finished check_button_state.")
 
 
     def process_selected_videos(self):
@@ -967,12 +967,12 @@ class VideoPlacerApp:
         # Get final confirmation states for the selected files
         final_confirmation_states = [self.per_video_confirmed_vars[i].get() for i in range(num_selected)]
         final_confirmation_str = "; ".join(map(str, final_confirmation_states))
-        logger.debug(f"Final confirmation states: {final_confirmation_states}")
+        # logger.debug(f"Final confirmation states: {final_confirmation_states}")
 
         # Get initial confirmation states (after pre-marking) for the selected files
         # self.initial_confirmation_state was stored after check_analysis_queue processed results
         initial_confirmation_str = "; ".join(map(str, self.initial_confirmation_state[:num_selected])) # Ensure we only log for selected files
-        logger.debug(f"Initial (pre-marked) confirmation states: {self.initial_confirmation_state[:num_selected]}")
+        # logger.debug(f"Initial (pre-marked) confirmation states: {self.initial_confirmation_state[:num_selected]}")
 
 
         # Get scores for the selected files

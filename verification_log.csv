@@ -1,3 +1,0 @@
-BaseDirectory,Category,Word,InterpreterID,NumFilesSelected,OriginalFileNames,PerVideoScores,PreMarkedConfirmation,FinalConfirmation,ProcessedIndices,AssignedTakeNumbers,Timestamp
-/Users/administrator/Desktop/Projects/CHDatasetManager/AI Dataset,ABC - One-Handed,A,004,4,006_4.mp4; 006_3.mp4; 006_2.mp4; 006_1.mp4,0.7348; 0.7774; 0.7849; 0.7767,False; False; False; False,True; True; True; True,0; 1; 2; 3,1; 2; 3; 4,2025-05-13 14:08:25
-/Users/administrator/Desktop/Projects/CHDatasetManager/AI Dataset,ABC - One-Handed,A,0100,2,Azima Reel.mov; Azima Reel pt 2.mov,0.1022; 0.1022,False; False,True; True,0; 1,1; 2,2025-06-23 16:23:34
