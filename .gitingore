@@ -1,7 +1,0 @@
-/venv_video_placer
-.DS_Store
-.roomodes
-*.mp4
-/__pycache__
-/build
-/dist

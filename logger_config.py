@@ -8,7 +8,7 @@ def setup_logging():
     """Configures the application-wide logger."""
     log_file_path = os.path.join(get_app_base_path(), APP_LOG_FILENAME)
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.WARN,
         format='%(asctime)s - %(levelname)s - %(threadName)s - %(module)s - %(funcName)s - %(message)s',
         filename=log_file_path,
         filemode='a'
